@@ -51,11 +51,11 @@
         <div class="sidebar p-3">
             <h4 class="text-center">Admin Panel</h4>
             <hr style="border-color: rgba(255, 255, 255, 0.5);">
-            <a href="#" class="active">Home</a>
-            <a href="#">Data Obat</a>
-            <a href="#">Data Periode</a>
-            <a href="#">Data Pegawai</a>
-            <a href="#">Perhitungan</a>
+            <a href="{{ route('admin') }}">Home</a>
+            <a href="{{ route('dataobat') }}">Data Obat</a>
+            <a href="{{ route('dataperiode') }}">Data Periode</a>
+            <a href="{{ route('datapegawai') }}">Data Pegawai</a>
+            <a href="{{ route('perhitungan') }}">Perhitungan</a>
         </div>
 
         <!-- Content Area -->

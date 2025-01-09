@@ -24,4 +24,8 @@ Route::post('proses_register', [AuthController::class, 'proses_register'])->name
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('admin', [AdminController::class, 'index'])->name('admin');
+    Route::get('dataobat', [AdminController::class, 'dataobat'])->name('dataobat');
+    Route::get('dataperiode', [AdminController::class, 'dataperiode'])->name('dataperiode');
+    Route::get('datapegawai', [AdminController::class, 'datapegawai'])->name('datapegawai');
+    Route::get('perhitungan', [AdminController::class, 'perhitungan'])->name('perhitungan');
 });

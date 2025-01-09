@@ -10,4 +10,24 @@ class AdminController extends Controller
     {
         return view('admin.dahboard');
     }
+
+    public function dataobat()
+    {
+        return view('admin.dataobat');
+    }
+
+    public function dataperiode()
+    {
+        return view('admin.dataperiode');
+    }
+
+    public function datapegawai()
+    {
+        return view('admin.datapegawai');
+    }
+
+    public function perhitungan()
+    {
+        return view('admin.perhitungan');
+    }
 }
