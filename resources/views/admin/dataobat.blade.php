@@ -20,19 +20,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>OB002</td>
-                    <td>Amoxicillin</td>
-                    <td>Antibiotik</td>
-                    <td>Kapsul</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
-                            data-id="2" data-kode="OB002" data-nama="Amoxicillin" data-kategori="Obat Keras"
-                            data-satuan="Botol">Edit</button>
-                        <button class="btn btn-sm btn-danger">Hapus</button>
-                    </td>
-                </tr>
+                @foreach ($obat as $index => $o)
+                    <tr>
+                        <td>{{ ++$index }}</td>
+                        <td>{{ $o->kode }}</td>
+                        <td>{{ $o->nama }}</td>
+                        <td>{{ $o->kategori }}</td>
+                        <td>{{ $o->satuan }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
+                                data-id="{{ $o->id }}" data-kode="{{ $o->kode }}" data-nama="{{ $o->nama }}"
+                                data-kategori="{{ $o->kategori }}" data-satuan="{{ $o->satuan }}">Edit</button>
+                            <a href="{{ route('hapusobat', $o->id) }}" class="btn btn-sm btn-danger">Hapus</a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -46,19 +48,22 @@
                     <h5 class="modal-title" id="addMedicineModalLabel">Tambah Obat</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form>
+                <form action="{{ route('postobat') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
                         <div class="mb-3">
                             <label for="kodeObat" class="form-label">Kode Obat</label>
-                            <input type="text" class="form-control" id="kodeObat" placeholder="Masukkan Kode Obat">
+                            <input type="text" class="form-control" id="kodeObat" placeholder="Masukkan Kode Obat"
+                                name="kode">
                         </div>
                         <div class="mb-3">
                             <label for="namaObat" class="form-label">Nama Obat</label>
-                            <input type="text" class="form-control" id="namaObat" placeholder="Masukkan Nama Obat">
+                            <input type="text" class="form-control" id="namaObat" placeholder="Masukkan Nama Obat"
+                                name="nama">
                         </div>
                         <div class="mb-3">
                             <label for="kategori" class="form-label">Kategori</label>
-                            <select class="form-select" id="kategori">
+                            <select class="form-select" id="kategori" name="kategori">
                                 <option value="Obat Keras">Obat Keras</option>
                                 <option value="Obat Bebas Terbatas">Obat Bebas Terbatas</option>
                                 <option value="Obat Bebas">Obat Bebas</option>
@@ -66,19 +71,20 @@
                         </div>
                         <div class="mb-3">
                             <label for="satuan" class="form-label">Satuan</label>
-                            <select class="form-select" id="satuan">
+                            <select class="form-select" id="satuan" name="satuan">
                                 <option value="Strip">Strip</option>
                                 <option value="Botol">Botol</option>
                                 <option value="Sachet">Sachet</option>
                                 <option value="Tube">Tube</option>
                             </select>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary">Simpan</button>
-                </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -93,19 +99,21 @@
                     <h5 class="modal-title" id="editMedicineModalLabel">Edit Obat</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form>
+                <form action="{{ route('postobat') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="text" id="editid" name="id" hidden>
                         <div class="mb-3">
                             <label for="editKodeObat" class="form-label">Kode Obat</label>
-                            <input type="text" class="form-control" id="editKodeObat" disabled>
+                            <input type="text" class="form-control" id="editKodeObat" name="kode">
                         </div>
                         <div class="mb-3">
                             <label for="editNamaObat" class="form-label">Nama Obat</label>
-                            <input type="text" class="form-control" id="editNamaObat">
+                            <input type="text" class="form-control" id="editNamaObat" name="nama">
                         </div>
                         <div class="mb-3">
                             <label for="editKategori" class="form-label">Kategori</label>
-                            <select class="form-select" id="editKategori">
+                            <select class="form-select" id="editKategori" name="kategori">
                                 <option value="Obat Keras">Obat Keras</option>
                                 <option value="Obat Bebas Terbatas">Obat Bebas Terbatas</option>
                                 <option value="Obat Bebas">Obat Bebas</option>
@@ -113,19 +121,20 @@
                         </div>
                         <div class="mb-3">
                             <label for="editSatuan" class="form-label">Satuan</label>
-                            <select class="form-select" id="editSatuan">
+                            <select class="form-select" id="editSatuan" name="satuan">
                                 <option value="Strip">Strip</option>
                                 <option value="Botol">Botol</option>
                                 <option value="Sachet">Sachet</option>
                                 <option value="Tube">Tube</option>
                             </select>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary">Simpan</button>
-                </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -143,6 +152,7 @@
                 const kategori = button.getAttribute('data-kategori');
                 const satuan = button.getAttribute('data-satuan');
 
+                document.getElementById('editid').value = id;
                 document.getElementById('editKodeObat').value = kode;
                 document.getElementById('editNamaObat').value = nama;
                 document.getElementById('editKategori').value = kategori;
