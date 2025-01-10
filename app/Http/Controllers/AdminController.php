@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Obat;
+use App\Models\Periode;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -45,15 +46,18 @@ class AdminController extends Controller
 
         return redirect()->route('dataobat')->with('success', 'obat created successfully.');
     }
-    public function hapusobat($id){
-        $obat=Obat::find($id);
+    public function hapusobat($id)
+    {
+        $obat = Obat::find($id);
         $obat->delete();
         return redirect()->route('dataobat')->with('success', 'obat created successfully.');
     }
 
     public function dataperiode()
     {
-        return view('admin.dataperiode');
+        $periode = Periode::all();
+        $obat = Obat::all();
+        return view('admin.dataperiode', compact('obat', 'periode'));
     }
 
     public function datapegawai()
