@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Obat;
 use App\Models\Periode;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -62,7 +64,50 @@ class AdminController extends Controller
 
     public function datapegawai()
     {
-        return view('admin.datapegawai');
+        $user = User::all();
+        return view('admin.datapegawai', compact('user'));
+    }
+    public function postpegawai(Request $request)
+    {
+        // dd(vars: $request->all());
+        if ($request->id) {
+            $request->validate([
+                'name' => 'required',
+                'email' => 'required',
+                'level' => 'required',
+            ]);
+            $user = User::find($request->id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->level = $request->level;
+
+            $user->save();
+            return redirect()->route('datapegawai')->with('success', 'pegawai updated successfully.');
+        }
+
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'username' => 'required',
+            'level' => 'required',
+        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->username = $request->username;
+        $user->level = $request->level;
+        $user->save();
+        return redirect()->route('datapegawai')->with('success', 'pegawai created successfully.');
+    }
+
+    public function hapuspegawai($id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        return redirect()->route('datapegawai')->with('success', 'pegawai deleted successfully.');
     }
 
     public function perhitungan()
