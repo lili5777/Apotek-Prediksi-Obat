@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Obat;
 use App\Models\Periode;
+use App\Models\Periode_obat;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -59,7 +60,36 @@ class AdminController extends Controller
     {
         $periode = Periode::all();
         $obat = Obat::all();
-        return view('admin.dataperiode', compact('obat', 'periode'));
+        $jumlah = Periode_obat::all()->groupBy('id_periode');
+        return view('admin.dataperiode', compact('obat', 'periode', 'jumlah'));
+    }
+    public function postperiode(Request $request)
+    {
+        $request->validate([
+            'periode' => 'required|date',
+            'id_obat.*' => 'required|exists:obats,id',
+            'jumlah.*' => 'required|integer|min:0',
+        ]);
+
+        $periode = new Periode();
+        $periode->periode = $request->periode . '-01';
+        $periode->save();
+
+        $obat = $request->id_obat;
+        $jumlah = $request->jumlah;
+
+        foreach ($obat as $key => $id_obat) {
+            $jumlah_obat = $jumlah[$key];  // Ambil jumlah berdasarkan index
+            if ($jumlah_obat > 0) {
+                Periode_obat::create([
+                    'id_periode' => $periode->id,
+                    'id_obat' => $id_obat,
+                    'jumlah' => $jumlah_obat,
+                ]);
+            }
+        }
+
+        return redirect()->route('dataperiode')->with('success', 'Periode berhasil disimpan.');
     }
 
     public function datapegawai()

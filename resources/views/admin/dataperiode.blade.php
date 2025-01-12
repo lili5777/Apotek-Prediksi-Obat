@@ -22,11 +22,16 @@
             <tbody>
                 @foreach ($periode as $i => $p)
                     <tr>
-                        <td>a</td>
-                        <td>0</td>
+                        <td>{{ ++$i }}</td>
+                        <td>{{ $p->periode }}</td>
                         @foreach ($obat as $o)
-                            <td>{{ $o->id }}</td>
+                            @php
+                                // Cari jumlah obat pada periode tertentu
+                                $jumlah_obat = $jumlah[$p->id]->where('id_obat', $o->id)->first()->jumlah ?? 0;
+                            @endphp
+                            <td>{{ $jumlah_obat }}</td>
                         @endforeach
+
                         <td>s</td>
                     </tr>
                 @endforeach
@@ -43,7 +48,7 @@
                     <h5 class="modal-title" id="addMedicineModalLabel">Tambah Periode</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="" method="POST">
+                <form action="{{ route('postperiode') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -53,19 +58,20 @@
                         </div>
                         @foreach ($obat as $o)
                             <div class="mb-3">
+                                <input type="hidden" value="{{ $o->id }}" name="id_obat[]"> <!-- Menjadi array -->
                                 <label for="jumlah" class="form-label">{{ $o->nama }}</label>
-                                <input type="number" class="form-control" id="jumlah" placeholder="Masukkan Jumlah Obat"
-                                    name="jumlah">
+                                <input type="number" class="form-control" id="jumlah{{ $o->nama }}"
+                                    placeholder="Masukkan Jumlah Obat {{ $o->nama }}" name="jumlah[]">
+                                <!-- Menjadi array -->
                             </div>
                         @endforeach
-
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
