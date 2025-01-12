@@ -23,16 +23,19 @@
                 @foreach ($periode as $i => $p)
                     <tr>
                         <td>{{ ++$i }}</td>
-                        <td>{{ $p->periode }}</td>
+                        <td>{{ \Carbon\Carbon::parse($p->periode)->format('F Y') }}</td>
                         @foreach ($obat as $o)
                             @php
-                                // Cari jumlah obat pada periode tertentu
                                 $jumlah_obat = $jumlah[$p->id]->where('id_obat', $o->id)->first()->jumlah ?? 0;
                             @endphp
                             <td>{{ $jumlah_obat }}</td>
                         @endforeach
 
-                        <td>s</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
+                                data-id="" data-nama="" data-email="" data-role="">Edit</button>
+                            <a href="{{ route('hapuspegawai', $p->id) }}" class="btn btn-sm btn-danger">Hapus</a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
