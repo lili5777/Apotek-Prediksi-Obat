@@ -30,11 +30,10 @@
                             @endphp
                             <td>{{ $jumlah_obat }}</td>
                         @endforeach
-
                         <td>
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
-                                data-id="" data-nama="" data-email="" data-role="">Edit</button>
-                            <a href="{{ route('hapuspegawai', $p->id) }}" class="btn btn-sm btn-danger">Hapus</a>
+                                data-id="">Edit</button>
+                            <a href="" class="btn btn-sm btn-danger">Hapus</a>
                         </td>
                     </tr>
                 @endforeach
