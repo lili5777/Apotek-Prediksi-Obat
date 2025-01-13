@@ -7,7 +7,12 @@
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMedicineModal">Tambah Periode</button>
         </div>
         {{-- <p>Below is the list of medicines available in the system.</p> --}}
-
+        @error('periode')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+        @error('jumlah.*')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>

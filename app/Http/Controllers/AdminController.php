@@ -73,7 +73,22 @@ class AdminController extends Controller
             'periode' => 'required|date',
             'id_obat.*' => 'required|exists:obats,id',
             'jumlah.*' => 'required|integer|min:0',
+        ], [
+            'jumlah.*.required' => 'Jumlah obat tidak boleh kosong.',
+            'jumlah.*.integer' => 'Jumlah obat harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah obat tidak boleh kurang dari 0.',
         ]);
+
+        // Cek apakah periode sudah ada di database
+        $existingPeriode = Periode::where('periode', $request->periode . '-01')
+            ->when($request->id, function ($query) use ($request) {
+                return $query->where('id', '!=', $request->id);
+            })
+            ->exists();
+
+        if ($existingPeriode) {
+            return redirect()->back()->withErrors(['periode' => 'Periode sudah ada, silakan pilih periode lain.']);
+        }
 
         if ($request->id) {
             $periode = Periode::find($request->id);
@@ -180,6 +195,7 @@ class AdminController extends Controller
 
     public function perhitungan()
     {
-        return view('admin.perhitungan');
+        $obat = Obat::all();
+        return view('admin.perhitungan', compact('obat'));
     }
 }
