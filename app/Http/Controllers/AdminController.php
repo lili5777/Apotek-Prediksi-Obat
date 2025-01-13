@@ -13,7 +13,10 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dahboard');
+        $obat = Obat::count();
+        $periode = Periode::count();
+        $pegawai = User::count();
+        return view('admin.dahboard', compact('obat', 'periode', 'pegawai'));
     }
 
     public function dataobat()
