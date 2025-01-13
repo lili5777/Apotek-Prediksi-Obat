@@ -32,8 +32,11 @@
                         @endforeach
                         <td>
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
-                                data-id="">Edit</button>
-                            <a href="" class="btn btn-sm btn-danger">Hapus</a>
+                                data-id="{{ $p->id }}" data-periode="{{ $p->periode }}"
+                                data-obat="{{ json_encode($jumlah[$p->id]->mapWithKeys(fn($item) => [$item->id_obat => $item->jumlah])->toArray()) }}">
+                                Edit
+                            </button>
+                            <a href="{{ route('hapusperiode', $p->id) }}" class="btn btn-sm btn-danger">Hapus</a>
                         </td>
                     </tr>
                 @endforeach
@@ -79,45 +82,32 @@
     </div>
 
 
-    <!-- Modal for editing medicine -->
+    {{-- // Edit Modal --}}
     <div class="modal fade" id="editMedicineModal" tabindex="-1" aria-labelledby="editMedicineModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editMedicineModalLabel">Edit Obat</h5>
+                    <h5 class="modal-title" id="editMedicineModalLabel">Edit Periode</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="" method="POST">
+                <form action="{{ route('postperiode') }}" method="POST">
                     @csrf
+                    <input hidden id="editid" name="id">
                     <div class="modal-body">
-                        <input type="text" id="editid" name="id" hidden>
                         <div class="mb-3">
-                            <label for="editKodeObat" class="form-label">Kode Obat</label>
-                            <input type="text" class="form-control" id="editKodeObat" name="kode">
+                            <label for="editPeriode" class="form-label">Periode</label>
+                            <input type="month" class="form-control" id="editPeriode" name="periode">
                         </div>
-                        <div class="mb-3">
-                            <label for="editNamaObat" class="form-label">Nama Obat</label>
-                            <input type="text" class="form-control" id="editNamaObat" name="nama">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editKategori" class="form-label">Kategori</label>
-                            <select class="form-select" id="editKategori" name="kategori">
-                                <option value="Obat Keras">Obat Keras</option>
-                                <option value="Obat Bebas Terbatas">Obat Bebas Terbatas</option>
-                                <option value="Obat Bebas">Obat Bebas</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editSatuan" class="form-label">Satuan</label>
-                            <select class="form-select" id="editSatuan" name="satuan">
-                                <option value="Strip">Strip</option>
-                                <option value="Botol">Botol</option>
-                                <option value="Sachet">Sachet</option>
-                                <option value="Tube">Tube</option>
-                            </select>
-                        </div>
-
+                        @foreach ($obat as $o)
+                            <div class="mb-3">
+                                <input type="hidden" value="{{ $o->id }}" name="id_obat[]">
+                                <label for="jumlahEdit{{ $o->id }}" class="form-label">{{ $o->nama }}</label>
+                                <input type="number" class="form-control jumlah-obat" id="jumlahEdit{{ $o->id }}"
+                                    name="jumlah[]" data-id="{{ $o->id }}"
+                                    placeholder="Masukkan Jumlah Obat {{ $o->nama }}">
+                            </div>
+                        @endforeach
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -131,21 +121,22 @@
 
 
     <script>
-        // Example of populating the Edit Modal with data
         const editButtons = document.querySelectorAll('[data-bs-target="#editMedicineModal"]');
         editButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const id = button.getAttribute('data-id');
-                const kode = button.getAttribute('data-kode');
-                const nama = button.getAttribute('data-nama');
-                const kategori = button.getAttribute('data-kategori');
-                const satuan = button.getAttribute('data-satuan');
+                const periode = button.getAttribute('data-periode');
+                const formattedPeriode = periode.substring(0, 7)
+                const obatData = JSON.parse(button.getAttribute('data-obat'));
 
                 document.getElementById('editid').value = id;
-                document.getElementById('editKodeObat').value = kode;
-                document.getElementById('editNamaObat').value = nama;
-                document.getElementById('editKategori').value = kategori;
-                document.getElementById('editSatuan').value = satuan;
+                document.getElementById('editPeriode').value = formattedPeriode;
+
+                const jumlahInputs = document.querySelectorAll('#editMedicineModal .jumlah-obat');
+                jumlahInputs.forEach(input => {
+                    const obatId = input.getAttribute('data-id');
+                    input.value = obatData[obatId] || 0;
+                });
             });
         });
     </script>

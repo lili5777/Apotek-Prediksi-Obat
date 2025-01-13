@@ -65,11 +65,38 @@ class AdminController extends Controller
     }
     public function postperiode(Request $request)
     {
+
         $request->validate([
             'periode' => 'required|date',
             'id_obat.*' => 'required|exists:obats,id',
             'jumlah.*' => 'required|integer|min:0',
         ]);
+
+        if ($request->id) {
+            $periode = Periode::find($request->id);
+            $periode->periode = $request->periode . '-01';
+            $periode->save();
+
+            $obat = $request->id_obat;
+            $jumlah = $request->jumlah;
+
+            foreach ($obat as $key => $id_obat) {
+                $jumlah_obat = $jumlah[$key];  // Ambil jumlah berdasarkan index
+                if ($jumlah_obat > 0) {
+                    Periode_obat::updateOrCreate(
+                        [
+                            'id_periode' => $periode->id,
+                            'id_obat' => $id_obat,
+                        ],
+                        [
+                            'jumlah' => $jumlah_obat,
+                        ]
+                    );
+                }
+            }
+
+            return redirect()->route('dataperiode')->with('success', 'Periode berhasil disimpan.');
+        }
 
         $periode = new Periode();
         $periode->periode = $request->periode . '-01';
@@ -90,6 +117,14 @@ class AdminController extends Controller
         }
 
         return redirect()->route('dataperiode')->with('success', 'Periode berhasil disimpan.');
+    }
+
+    public function hapusperiode($id)
+    {
+        $periode = Periode::find($id);
+        $periode->delete();
+
+        return redirect()->route('dataperiode')->with('success', 'Periode berhasil diHapus.');
     }
 
     public function datapegawai()

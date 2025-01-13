@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('hapusobat/{id}', [AdminController::class, 'hapusobat'])->name('hapusobat');
     Route::get('dataperiode', [AdminController::class, 'dataperiode'])->name('dataperiode');
     Route::post('postperiode', [AdminController::class, 'postperiode'])->name('postperiode');
+    Route::get('hapusperiode/{id}', [AdminController::class, 'hapusperiode'])->name('hapusperiode');
     Route::get('datapegawai', [AdminController::class, 'datapegawai'])->name('datapegawai');
     Route::post('postdatapegawai', [AdminController::class, 'postpegawai'])->name('postpegawai');
     Route::get('hapuspegawai/{id}', [AdminController::class, 'hapuspegawai'])->name('hapuspegawai');
