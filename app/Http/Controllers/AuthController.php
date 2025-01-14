@@ -18,7 +18,7 @@ class AuthController extends Controller
         }
         return view('login');
     }
-    //
+
     public function proses_login(Request $request)
     {
 
@@ -41,8 +41,6 @@ class AuthController extends Controller
         return view('register');
     }
 
-
-    // aksi form register
     public function proses_register(Request $request)
     {
         $validator =  Validator::make($request->all(), [
@@ -51,34 +49,21 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-
-        // kalau gagal kembali ke halaman register dengan munculkan pesan error
         if ($validator->fails()) {
             return redirect('/register')
                 ->withErrors($validator)
                 ->withInput();
         }
-        // kalau berhasil isi level & hash passwordnya ya biar secure
         $request['level'] = 'user';
         $request['password'] = bcrypt($request->password);
-
-        // masukkan semua data pada request ke table user
         User::create($request->all());
-
-        // kalo berhasil arahkan ke halaman login
         return redirect()->route('login');
     }
 
     public function logout(Request $request)
     {
-        // logout itu harus menghapus session nya 
-
         $request->session()->flush();
-
-        // jalan kan juga fungsi logout pada auth 
-
         Auth::logout();
-        // kembali kan ke halaman login
         return Redirect()->route('login');
     }
 }
