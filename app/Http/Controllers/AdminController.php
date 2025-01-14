@@ -99,7 +99,7 @@ class AdminController extends Controller
             $jumlah = $request->jumlah;
 
             foreach ($obat as $key => $id_obat) {
-                $jumlah_obat = $jumlah[$key];  // Ambil jumlah berdasarkan index
+                $jumlah_obat = $jumlah[$key]; 
                 if ($jumlah_obat > 0) {
                     Periode_obat::updateOrCreate(
                         [
@@ -152,7 +152,7 @@ class AdminController extends Controller
     }
     public function postpegawai(Request $request)
     {
-        // dd(vars: $request->all());
+       
         if ($request->id) {
             $request->validate([
                 'name' => 'required',
