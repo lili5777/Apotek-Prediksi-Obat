@@ -99,7 +99,7 @@ class AdminController extends Controller
             $jumlah = $request->jumlah;
 
             foreach ($obat as $key => $id_obat) {
-                $jumlah_obat = $jumlah[$key]; 
+                $jumlah_obat = $jumlah[$key];
                 if ($jumlah_obat > 0) {
                     Periode_obat::updateOrCreate(
                         [
@@ -152,7 +152,7 @@ class AdminController extends Controller
     }
     public function postpegawai(Request $request)
     {
-       
+
         if ($request->id) {
             $request->validate([
                 'name' => 'required',
@@ -197,5 +197,17 @@ class AdminController extends Controller
     {
         $obat = Obat::all();
         return view('admin.perhitungan', compact('obat'));
+    }
+
+    public function postperhitungan(Request $request)
+    {
+        $request->validate([
+            'obat' => 'required',
+            'mulai' => 'required',
+            'selesai' => 'required',
+        ]);
+
+        $obat=Obat::all();
+        $mulai=Periode_obat::where('id_obat',$request->obat)->first();
     }
 }
