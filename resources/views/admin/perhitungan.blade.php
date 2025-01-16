@@ -5,7 +5,7 @@
         <h3>Perhitungan Obat</h3>
         <p>Silakan masukkan data berikut untuk melakukan perhitungan.</p>
 
-        <form action="" method="POST">
+        <form action="{{route('postperhitungan')}}" method="POST">
             @csrf
             <!-- Select Obat -->
             <div class="mb-3">

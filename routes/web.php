@@ -34,4 +34,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('postdatapegawai', [AdminController::class, 'postpegawai'])->name('postpegawai');
     Route::get('hapuspegawai/{id}', [AdminController::class, 'hapuspegawai'])->name('hapuspegawai');
     Route::get('perhitungan', [AdminController::class, 'perhitungan'])->name('perhitungan');
+    Route::post('postperhitungan', [AdminController::class, 'postperhitungan'])->name('postperhitungan');
 });

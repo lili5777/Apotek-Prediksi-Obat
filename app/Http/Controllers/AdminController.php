@@ -207,7 +207,28 @@ class AdminController extends Controller
             'selesai' => 'required',
         ]);
 
-        $obat=Obat::all();
-        $mulai=Periode_obat::where('id_obat',$request->obat)->first();
+        // dd($request->all());
+        $obat = Obat::where('id', $request->obat)->first();
+        // dd($obat);
+        $mulai = Periode::where('periode', $request->mulai . '-01')->first();
+        $selesai = Periode::where('periode', $request->selesai . '-01')->first();
+
+        $periodeList = Periode::whereBetween('periode', [$mulai->periode, $selesai->periode])->orderBy('periode', 'asc')->get();
+        // dd($periodeList);
+        $stokPerPeriode = [];
+
+        foreach ($periodeList as $periode) {
+            // dd($periode->id);
+            $stok = Periode_obat::where('id_obat', $obat->id)
+                ->where('id_periode', $periode->id)
+                ->first();
+            // dd($stok);
+            $stokPerPeriode[] = [
+                'periode' => $periode->periode,
+                'jumlah' => $stok ? $stok->jumlah : 0, // Default 0 jika data tidak ditemukan
+            ];
+        }
+
+        dd($stokPerPeriode);
     }
 }
