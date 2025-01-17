@@ -243,12 +243,12 @@ class AdminController extends Controller
         // manual perhitungan
         $trendParams = $this->calculateTrend($stokPerPeriode);
         $seasonal = $this->calculateSeasonal($stokPerPeriode, $trendParams);
-        $aprilPrediction = $this->predictStock($trendParams, $seasonal, count($stokPerPeriode) + 1);
+        $Prediction = $this->predictStock($trendParams, $seasonal, count($stokPerPeriode) + 1);
 
         return response()->json([
             'trend' => $trendParams,
             'seasonal' => $seasonal,
-            'april_prediction' => $aprilPrediction,
+            'prediction' => $Prediction,
         ]);
 
 
