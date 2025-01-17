@@ -201,6 +201,10 @@ class AdminController extends Controller
         return view('admin.perhitungan', compact('obat'));
     }
 
+
+
+
+
     public function postperhitungan(Request $request)
     {
         $request->validate([
@@ -229,39 +233,58 @@ class AdminController extends Controller
                 'periode' => $periode->periode,
                 'jumlah' => $stok ? $stok->jumlah : 0,
             ];
-            $historicalData[] = [
-                'ds' => Carbon::parse($periode->periode)->format('Y-m-d'), // Tanggal dalam format 'Y-m-d'
-                'y' => $stok ? $stok->jumlah : 0,
-            ];
+            // $historicalData[] = [
+            //     'ds' => Carbon::parse($periode->periode)->format('Y-m-d'), // Tanggal dalam format 'Y-m-d'
+            //     'y' => $stok ? $stok->jumlah : 0,
+            // ];
         }
+
+
+        // manual perhitungan
+        $trendParams = $this->calculateTrend($stokPerPeriode);
+        $seasonal = $this->calculateSeasonal($stokPerPeriode, $trendParams);
+        $aprilPrediction = $this->predictStock($trendParams, $seasonal, count($stokPerPeriode) + 1);
+
+        return response()->json([
+            'trend' => $trendParams,
+            'seasonal' => $seasonal,
+            'april_prediction' => $aprilPrediction,
+        ]);
+
+
+
+        // cara 1
 
         // Prediksi stok bulan depan
-        if (count($stokPerPeriode) > 1) {
-            $totalGrowth = 0;
+        // if (count($stokPerPeriode) > 1) {
+        //     $totalGrowth = 0;
 
-            for ($i = 1; $i < count($stokPerPeriode); $i++) {
-                // Hitung perubahan stok antar bulan
-                $growth = $stokPerPeriode[$i]['jumlah'] - $stokPerPeriode[$i - 1]['jumlah'];
-                $totalGrowth += $growth;
-            }
+        //     for ($i = 1; $i < count($stokPerPeriode); $i++) {
+        //         // Hitung perubahan stok antar bulan
+        //         $growth = $stokPerPeriode[$i]['jumlah'] - $stokPerPeriode[$i - 1]['jumlah'];
+        //         $totalGrowth += $growth;
+        //     }
 
-            // Rata-rata kenaikan stok
-            $averageGrowth = $totalGrowth / (count($stokPerPeriode) - 1);
+        //     // Rata-rata kenaikan stok
+        //     $averageGrowth = $totalGrowth / (count($stokPerPeriode) - 1);
 
-            // Prediksi stok bulan depan
-            $lastPeriode = end($stokPerPeriode);
-            $nextMonth = Carbon::parse($lastPeriode['periode'])->addMonth()->format('Y-m-d');
-            $predictedStock = max(0, $lastPeriode['jumlah'] + $averageGrowth); // Hindari stok negatif
+        //     // Prediksi stok bulan depan
+        //     $lastPeriode = end($stokPerPeriode);
+        //     $nextMonth = Carbon::parse($lastPeriode['periode'])->addMonth()->format('Y-m-d');
+        //     $predictedStock = max(0, $lastPeriode['jumlah'] + $averageGrowth); // Hindari stok negatif
 
-            // Tambahkan prediksi ke array
-            $stokPerPeriode[] = [
-                'periode' => $nextMonth,
-                'jumlah' => round($predictedStock), // Pembulatan ke 2 desimal
-            ];
-        }
+        //     // Tambahkan prediksi ke array
+        //     $stokPerPeriode[] = [
+        //         'periode' => $nextMonth,
+        //         'jumlah' => round($predictedStock), // Pembulatan ke 2 desimal
+        //     ];
+        // }
 
-        dd($stokPerPeriode);
-// tes
+        // dd($stokPerPeriode);
+
+
+
+        // cara 2
         // $forecastData = $this->predictStok($historicalData);
 
         // return response()->json([
@@ -269,32 +292,87 @@ class AdminController extends Controller
         // ]);
     }
 
-    private function predictStok(array $historicalData)
+    private function calculateTrend(array $stokPerPeriode)
     {
-        // Misalnya, implementasikan regresi sederhana atau moving average di sini
-        // Contoh sederhana, prediksi menggunakan rata-rata per bulan
+        $n = count($stokPerPeriode);
+        $sumT = 0;
+        $sumY = 0;
+        $sumT2 = 0;
+        $sumTY = 0;
 
-        $predictedData = [];
-        $totalStok = 0;
-        $totalPeriods = count($historicalData);
+        foreach ($stokPerPeriode as $index => $data) {
+            $t = $index + 1;
+            $y = $data['jumlah'];
 
-        // Hitung total stok untuk menghitung rata-rata
-        foreach ($historicalData as $data) {
-            $totalStok += $data['y'];
+            $sumT += $t;
+            $sumY += $y;
+            $sumT2 += $t * $t;
+            $sumTY += $t * $y;
         }
 
-        // Prediksi rata-rata stok untuk periode selanjutnya
-        $averageStok = $totalStok / $totalPeriods;
+        $m = round(($n * $sumTY - $sumT * $sumY) / ($n * $sumT2 - $sumT ** 2), 2);
+        // $b = round(($sumY - $m * $sumT) / $n, 2);
+        $b = round(($stokPerPeriode[0]['jumlah'] - $m * 1), 2);
 
-        // Tambahkan prediksi stok untuk beberapa bulan ke depan
-        for ($i = 0; $i < 3; $i++) { // Misalnya, prediksi untuk 3 periode berikutnya
-            $nextPeriod = Carbon::parse($historicalData[$totalPeriods - 1]['ds'])->addMonth($i + 1)->format('Y-m-d');
-            $predictedData[] = [
-                'ds' => $nextPeriod,
-                'y' => $averageStok, // Prediksi stok rata-rata
-            ];
-        }
-
-        return $predictedData;
+        return ['m' => $m, 'b' => $b];
     }
+
+    private function calculateGt($trendParams, $t)
+    {
+        return round($trendParams['m'] * $t + $trendParams['b'], 2);
+    }
+
+    private function calculateSeasonal($dataset, $trendParams)
+    {
+        $seasonal = [];
+        foreach ($dataset as $index => $data) {
+            $t = $index + 1;
+            $y = $data['jumlah'];
+            $g_t = $this->calculateGt($trendParams, $t);
+            // error_log("g(t) for t = $t: $g_t");
+            $seasonal[] = round($y - $g_t, 2);
+        }
+        return $seasonal;
+    }
+
+    private function predictStock($trendParams, $seasonal, $t)
+    {
+        $g_t = $this->calculateGt($trendParams, $t);
+        // $seasonalAvg = round(array_sum($seasonal) / count($seasonal), 2);
+        $seasonalAvg = max($seasonal);
+        // dd($seasonalAvg);
+        return round($g_t + $seasonalAvg, 2);
+    }
+
+
+
+
+    // private function predictStok(array $historicalData)
+    // {
+    //     // Misalnya, implementasikan regresi sederhana atau moving average di sini
+    //     // Contoh sederhana, prediksi menggunakan rata-rata per bulan
+
+    //     $predictedData = [];
+    //     $totalStok = 0;
+    //     $totalPeriods = count($historicalData);
+
+    //     // Hitung total stok untuk menghitung rata-rata
+    //     foreach ($historicalData as $data) {
+    //         $totalStok += $data['y'];
+    //     }
+
+    //     // Prediksi rata-rata stok untuk periode selanjutnya
+    //     $averageStok = $totalStok / $totalPeriods;
+
+    //     // Tambahkan prediksi stok untuk beberapa bulan ke depan
+    //     for ($i = 0; $i < 3; $i++) { // Misalnya, prediksi untuk 3 periode berikutnya
+    //         $nextPeriod = Carbon::parse($historicalData[$totalPeriods - 1]['ds'])->addMonth($i + 1)->format('Y-m-d');
+    //         $predictedData[] = [
+    //             'ds' => $nextPeriod,
+    //             'y' => $averageStok, // Prediksi stok rata-rata
+    //         ];
+    //     }
+
+    //     return $predictedData;
+    // }
 }
