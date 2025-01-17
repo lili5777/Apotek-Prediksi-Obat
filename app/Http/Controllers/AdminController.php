@@ -245,11 +245,17 @@ class AdminController extends Controller
         $seasonal = $this->calculateSeasonal($stokPerPeriode, $trendParams);
         $Prediction = $this->predictStock($trendParams, $seasonal, count($stokPerPeriode) + 1);
 
-        return response()->json([
-            'trend' => $trendParams,
-            'seasonal' => $seasonal,
-            'prediction' => $Prediction,
+        return view('admin.hasil', [
+            'trend' => $trendParams, // Data trend
+            'seasonal' => $seasonal, // Data musiman
+            'prediction' => $Prediction, // Prediksi stok bulan berikutnya
         ]);
+
+        // return response()->json([
+        //     'trend' => $trendParams,
+        //     'seasonal' => $seasonal,
+        //     'prediction' => $Prediction,
+        // ]);
 
 
 

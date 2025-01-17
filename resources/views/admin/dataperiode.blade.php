@@ -2,55 +2,68 @@
 @section('judul', 'Data Periode')
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Data Periode</h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMedicineModal">Tambah Periode</button>
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-primary">Data Periode</h3>
+            <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addMedicineModal">
+                <i class="bi bi-plus-circle me-1"></i> Tambah Periode
+            </button>
         </div>
-        {{-- <p>Below is the list of medicines available in the system.</p> --}}
+
+        <!-- Error Message Section -->
         @error('periode')
             <div class="text-danger">{{ $message }}</div>
         @enderror
         @error('jumlah.*')
             <div class="text-danger">{{ $message }}</div>
         @enderror
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Periode</th>
-                    @foreach ($obat as $o)
-                        <th>{{ $o->nama }}</th>
-                    @endforeach
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($periode as $i => $p)
-                    <tr>
-                        <td>{{ ++$i }}</td>
-                        <td>{{ \Carbon\Carbon::parse($p->periode)->format('F Y') }}</td>
-                        @foreach ($obat as $o)
-                            @php
-                                $jumlah_obat = $jumlah[$p->id]->where('id_obat', $o->id)->first()->jumlah ?? 0;
-                            @endphp
-                            <td>{{ $jumlah_obat }}</td>
-                        @endforeach
-                        <td>
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
-                                data-id="{{ $p->id }}" data-periode="{{ $p->periode }}"
-                                data-obat="{{ json_encode($jumlah[$p->id]->mapWithKeys(fn($item) => [$item->id_obat => $item->jumlah])->toArray()) }}">
-                                Edit
-                            </button>
-                            <a href="{{ route('hapusperiode', $p->id) }}" class="btn btn-sm btn-danger">Hapus</a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+
+        <!-- Table Section -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle text-center">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>No</th>
+                                <th>Periode</th>
+                                @foreach ($obat as $o)
+                                    <th>{{ $o->nama }}</th>
+                                @endforeach
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($periode as $i => $p)
+                                <tr>
+                                    <td>{{ ++$i }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($p->periode)->format('F Y') }}</td>
+                                    @foreach ($obat as $o)
+                                        @php
+                                            $jumlah_obat = $jumlah[$p->id]->where('id_obat', $o->id)->first()->jumlah ?? 0;
+                                        @endphp
+                                        <td>{{ $jumlah_obat }}</td>
+                                    @endforeach
+                                    <td>
+                                        <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#editMedicineModal"
+                                            data-id="{{ $p->id }}" data-periode="{{ $p->periode }}"
+                                            data-obat="{{ json_encode($jumlah[$p->id]->mapWithKeys(fn($item) => [$item->id_obat => $item->jumlah])->toArray()) }}">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </button>
+                                        <a href="{{ route('hapusperiode', $p->id) }}" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash3"></i> Hapus
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
-
-    <!-- Modal for adding medicine -->
+    <!-- Modal for adding period -->
     <div class="modal fade" id="addMedicineModal" tabindex="-1" aria-labelledby="addMedicineModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -63,16 +76,14 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="kodeObat" class="form-label">Periode</label>
-                            <input type="month" class="form-control" id="kodeObat" placeholder="Masukkan Periode"
-                                name="periode">
+                            <input type="month" class="form-control" id="kodeObat" placeholder="Masukkan Periode" name="periode">
                         </div>
                         @foreach ($obat as $o)
                             <div class="mb-3">
-                                <input type="hidden" value="{{ $o->id }}" name="id_obat[]"> <!-- Menjadi array -->
+                                <input type="hidden" value="{{ $o->id }}" name="id_obat[]">
                                 <label for="jumlah" class="form-label">{{ $o->nama }}</label>
                                 <input type="number" class="form-control" id="jumlah{{ $o->nama }}"
                                     placeholder="Masukkan Jumlah Obat {{ $o->nama }}" name="jumlah[]">
-                                <!-- Menjadi array -->
                             </div>
                         @endforeach
                     </div>
@@ -81,15 +92,12 @@
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 
-
-    {{-- // Edit Modal --}}
-    <div class="modal fade" id="editMedicineModal" tabindex="-1" aria-labelledby="editMedicineModalLabel"
-        aria-hidden="true">
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editMedicineModal" tabindex="-1" aria-labelledby="editMedicineModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -109,8 +117,7 @@
                                 <input type="hidden" value="{{ $o->id }}" name="id_obat[]">
                                 <label for="jumlahEdit{{ $o->id }}" class="form-label">{{ $o->nama }}</label>
                                 <input type="number" class="form-control jumlah-obat" id="jumlahEdit{{ $o->id }}"
-                                    name="jumlah[]" data-id="{{ $o->id }}"
-                                    placeholder="Masukkan Jumlah Obat {{ $o->nama }}">
+                                    name="jumlah[]" data-id="{{ $o->id }}" placeholder="Masukkan Jumlah Obat {{ $o->nama }}">
                             </div>
                         @endforeach
                     </div>
@@ -123,9 +130,8 @@
         </div>
     </div>
 
-
-
     <script>
+        // Populate the Edit Modal with data
         const editButtons = document.querySelectorAll('[data-bs-target="#editMedicineModal"]');
         editButtons.forEach(button => {
             button.addEventListener('click', () => {
