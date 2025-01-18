@@ -68,7 +68,7 @@
             <div class="col-md-5">
                 <div class="card p-4">
                     <div class="card-body">
-                        <h3 class="text-center mb-4">Apotek NurRezki</h3>
+                        <h3 class="text-center mb-4">Apotek</h3>
                         @if (session('error'))
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 {{ session('error') }}

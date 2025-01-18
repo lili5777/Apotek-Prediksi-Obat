@@ -221,7 +221,7 @@ class AdminController extends Controller
         $periodeList = Periode::whereBetween('periode', [$mulai->periode, $selesai->periode])->orderBy('periode', 'asc')->get();
 
         $stokPerPeriode = [];
-        $historicalData = [];
+        // $historicalData = [];
 
         foreach ($periodeList as $periode) {
 
