@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <!-- Header Section -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+       <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="fw-bold text-primary">Data Periode</h3>
             <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addMedicineModal">
                 <i class="bi bi-plus-circle me-1"></i> Tambah Periode
@@ -18,11 +18,40 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
 
-        <!-- Table Section -->
+        <!-- Table Section with improved scrolling -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center">
+                <style>
+                    .custom-table-responsive {
+                        width: 100%;
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
+                    }
+                    .custom-table {
+                        margin-bottom: 0;
+                        min-width: 100%;
+                    }
+                    /* Ensure table doesn't get too compressed */
+                    .custom-table th,
+                    .custom-table td {
+                        min-width: 100px; /* Minimum width for data columns */
+                    }
+                    .custom-table th:first-child,
+                    .custom-table td:first-child {
+                        min-width: 60px; /* Width for No column */
+                    }
+                    .custom-table th:nth-child(2),
+                    .custom-table td:nth-child(2) {
+                        min-width: 120px; /* Width for Period column */
+                    }
+                    .custom-table th:last-child,
+                    .custom-table td:last-child {
+                        min-width: 180px; /* Width for Action column */
+                    }
+                </style>
+                
+                <div class="custom-table-responsive">
+                    <table class="table table-striped table-hover align-middle text-center custom-table">
                         <thead class="table-primary">
                             <tr>
                                 <th>No</th>
@@ -61,7 +90,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Modal for adding period -->
     <div class="modal fade" id="addMedicineModal" tabindex="-1" aria-labelledby="addMedicineModalLabel" aria-hidden="true">
