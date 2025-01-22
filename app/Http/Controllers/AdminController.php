@@ -209,14 +209,24 @@ class AdminController extends Controller
     {
         $request->validate([
             'obat' => 'required',
-            'mulai' => 'required',
-            'selesai' => 'required',
+            'mulai' => 'required|date_format:Y-m',
+            'selesai' => 'required|date_format:Y-m|after:mulai',
+        ], [
+            'selesai.after' => 'Bulan dan tahun selesai harus setelah bulan dan tahun mulai.',
         ]);
 
         $obat = Obat::where('id', $request->obat)->first();
 
         $mulai = Periode::where('periode', $request->mulai . '-01')->first();
         $selesai = Periode::where('periode', $request->selesai . '-01')->first();
+
+        if (!$mulai) {
+            return back()->withErrors(['mulai' => 'Periode mulai tidak tersedia.']);
+        }
+
+        if (!$selesai) {
+            return back()->withErrors(['selesai' => 'Periode selesai tidak tersedia.']);
+        }
 
         $periodeList = Periode::whereBetween('periode', [$mulai->periode, $selesai->periode])->orderBy('periode', 'asc')->get();
 

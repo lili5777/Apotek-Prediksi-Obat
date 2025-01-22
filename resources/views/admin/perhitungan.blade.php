@@ -22,12 +22,18 @@
         <div class="mb-4">
             <label for="mulai" class="form-label">Bulan dan Tahun Mulai</label>
             <input type="month" class="form-control" id="mulai" name="mulai" required>
+            @error('mulai')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         <!-- Input Bulan dan Tahun Selesai -->
         <div class="mb-4">
             <label for="selesai" class="form-label">Bulan dan Tahun Selesai</label>
             <input type="month" class="form-control" id="selesai" name="selesai" required>
+            @error('selesai')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         <!-- Submit Button -->

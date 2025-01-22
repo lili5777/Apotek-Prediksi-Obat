@@ -37,20 +37,23 @@
                 </div>
             </div>
     
-            <!-- Card 3: Data Pegawai -->
-            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="icon bg-danger text-white rounded-circle mx-auto mb-3"
-                            style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-                            <i class="bi bi-people fs-4"></i>
+            @if (Auth::user()->level == 'admin')
+                <!-- Card 3: Data Pegawai -->
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="icon bg-danger text-white rounded-circle mx-auto mb-3"
+                                style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-people fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Data Pegawai</h5>
+                            <p class="card-text fs-5 fw-bold text-danger">{{ $pegawai }}</p>
+                            <a href="{{ route('datapegawai') }}" class="btn btn-outline-danger btn-sm">View Details</a>
                         </div>
-                        <h5 class="card-title">Data Pegawai</h5>
-                        <p class="card-text fs-5 fw-bold text-danger">{{ $pegawai }}</p>
-                        <a href="{{ route('datapegawai') }}" class="btn btn-outline-danger btn-sm">View Details</a>
                     </div>
                 </div>
-            </div>
+            @endif
+            
         </div>
     </div>
     

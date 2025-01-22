@@ -88,9 +88,11 @@
             <a href="{{ route('dataperiode') }}" class="{{ Request::routeIs('dataperiode') ? 'active' : '' }}">
                 <i class="bi bi-calendar-check"></i> Data Periode
             </a>
+            @if (Auth::user()->level == 'admin')
             <a href="{{ route('datapegawai') }}" class="{{ Request::routeIs('datapegawai') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Data Pegawai
             </a>
+            @endif
             <a href="{{ route('perhitungan') }}" class="{{ Request::routeIs('perhitungan') ? 'active' : '' }}">
                 <i class="bi bi-calculator"></i> Perhitungan
             </a>
