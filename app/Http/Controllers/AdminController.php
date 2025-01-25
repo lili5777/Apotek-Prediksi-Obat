@@ -204,7 +204,7 @@ class AdminController extends Controller
 
 
 
-
+    // proses perhitungan metode prophet
     public function postperhitungan(Request $request)
     {
         $request->validate([
