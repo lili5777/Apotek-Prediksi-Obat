@@ -40,6 +40,7 @@ class AuthController extends Controller
         return view('register');
     }
 
+    // register
     public function proses_register(Request $request)
     {
         $validator =  Validator::make($request->all(), [
