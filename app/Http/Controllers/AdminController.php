@@ -58,6 +58,11 @@ class AdminController extends Controller
     {
         $obat = Obat::find($id);
         $obat->delete();
+        if (Periode_obat::count() == 0) {
+            Periode::query()->delete();  // Menghapus semua data di tabel periode
+        }
+
+
         return redirect()->route('dataobat')->with('success', 'obat created successfully.');
     }
 
