@@ -73,10 +73,18 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-light bg-light d-md-none">
+        <div class="container-fluid">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="navbar-brand mb-0 h1">@yield('judul')</span>
+        </div>
+    </nav>
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="sidebar p-3">
+        <div class="sidebar p-3 d-none d-md-block">
             <h4 class="text-center">Apotek NR</h4>
             <hr style="border-color: rgba(255, 255, 255, 0.5);">
             <a href="{{ route('admin') }}" class="{{ Request::routeIs('admin') ? 'active' : '' }}">
@@ -89,18 +97,45 @@
                 <i class="bi bi-calendar-check"></i> Data Periode
             </a>
             @if (Auth::user()->level == 'admin')
-            <a href="{{ route('datapegawai') }}" class="{{ Request::routeIs('datapegawai') ? 'active' : '' }}">
-                <i class="bi bi-people"></i> Data Pegawai
-            </a>
+                <a href="{{ route('datapegawai') }}" class="{{ Request::routeIs('datapegawai') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i> Data Pegawai
+                </a>
             @endif
             <a href="{{ route('perhitungan') }}" class="{{ Request::routeIs('perhitungan') ? 'active' : '' }}">
                 <i class="bi bi-calculator"></i> Perhitungan
             </a>
         </div>
 
+        <!-- Offcanvas Sidebar for Mobile -->
+        <div class="offcanvas offcanvas-start" id="offcanvasSidebar">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body sidebar">
+                <a href="{{ route('admin') }}" class="{{ Request::routeIs('admin') ? 'active' : '' }}">
+                    <i class="bi bi-house-door"></i> Home
+                </a>
+                <a href="{{ route('dataobat') }}" class="{{ Request::routeIs('dataobat') ? 'active' : '' }}">
+                    <i class="bi bi-capsule"></i> Data Obat
+                </a>
+                <a href="{{ route('dataperiode') }}" class="{{ Request::routeIs('dataperiode') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-check"></i> Data Periode
+                </a>
+                @if (Auth::user()->level == 'admin')
+                    <a href="{{ route('datapegawai') }}" class="{{ Request::routeIs('datapegawai') ? 'active' : '' }}">
+                        <i class="bi bi-people"></i> Data Pegawai
+                    </a>
+                @endif
+                <a href="{{ route('perhitungan') }}" class="{{ Request::routeIs('perhitungan') ? 'active' : '' }}">
+                    <i class="bi bi-calculator"></i> Perhitungan
+                </a>
+            </div>
+        </div>
+
         <!-- Content Area -->
         <div class="flex-grow-1 p-4">
-            <nav class="navbar navbar-light mb-4">
+            <nav class="navbar navbar-light mb-4 d-none d-md-block">
                 <div class="container-fluid">
                     <span class="navbar-brand mb-0 h1">@yield('judul')</span>
                     <a href="{{ route('logout') }}" class="btn btn-outline-danger">Logout</a>

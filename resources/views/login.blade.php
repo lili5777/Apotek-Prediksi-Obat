@@ -77,6 +77,11 @@
                                 </button>
                             </div>
                         @endif
+                        @if(session('errors'))
+                            <div class="alert alert-danger">
+                                {{ session('errors')->first('login_gagal') }}
+                            </div>
+                        @endif
                         <form action="{{ route('proses_login') }}" method="POST" id="logForm">
                             {{ csrf_field() }}
                             <div class="mb-3">
